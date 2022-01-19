@@ -22,16 +22,22 @@ function Autobind(_target: any, _methodName: string | Symbol, descriptor: Proper
     return newDescriptor; 
 }
 
-type Listener = (items: Project[]) => void;
+type Listener<T> = (items: T[]) => void;
 
-class ProjectState {
-    private listeners: Listener[] = [];
-    private projects: Project[] = [];
-    private static instance: ProjectState;
-
-    private constructor() {
-
+class AppState<T> {
+    protected listeners: Listener<T>[] = [];
+    addListener(listenerFn: Listener<T>) {
+        this.listeners.push(listenerFn);
     }
+
+}
+
+class ProjectState extends AppState<Project> {
+    private static instance: ProjectState;
+    private projects: Project[] = [];
+    private constructor() {
+        super();
+     }
 
     static getInstance() : ProjectState {
         if(this.instance) {
@@ -39,10 +45,6 @@ class ProjectState {
         }
         this.instance = new ProjectState();
         return this.instance;
-    }
-
-    addListener(listenerFn: Listener) {
-        this.listeners.push(listenerFn);
     }
 
     addProjects(title: string, description: string, numberOfPeople: number) {
