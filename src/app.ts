@@ -2,6 +2,13 @@
 Display the form when the class is instantiated
 */
 
+interface Project {
+    id: string,
+    title: string;
+    description: string;
+    numberOfPeople: number
+}
+
 function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
     const originalDescriptor = descriptor.value;
     const newDescriptor: PropertyDescriptor = {
@@ -13,6 +20,32 @@ function Autobind(_target: any, _methodName: string | Symbol, descriptor: Proper
     }
     return newDescriptor; 
 }
+
+class ProjectState {
+    private projects: Project[] = [];
+    private static instance: ProjectState;
+
+    private constructor() {
+
+    }
+
+    static getInstance() : ProjectState {
+        if(this.instance) {
+            return this.instance;
+        }
+        this.instance = new ProjectState();
+        return this.instance;
+    }
+
+    addProjects({ id, title, description, numberOfPeople }: Project) {
+        const newProject = {
+            id, title, description, numberOfPeople }
+        this.projects.unshift(newProject);
+    }
+
+}
+
+const projectState = ProjectState.getInstance();
 
 class TodoList {
     templateElement: HTMLTemplateElement;
@@ -91,7 +124,7 @@ class TaskInput {
         const userInput = this.fetchUserInput();
         if(Array.isArray(userInput)) {
             const [title, desc, ppo] = userInput;
-            console.log({title, desc, ppo});
+            projectState.addProjects({id: Math.random().toString(),title, description: desc, numberOfPeople: +ppo});
         }
         this.clearForm();
     }
