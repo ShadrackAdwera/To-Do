@@ -2,11 +2,23 @@
 Display the form when the class is instantiated
 */
 
-interface Project {
-    id: string,
-    title: string;
-    description: string;
-    numberOfPeople: number
+enum ProjectStatus { Active, Complete }
+
+//Project type
+class Project {
+    private id: string;
+    private title: string;
+    private description: string;
+    private numberOfPeople: number;
+    private status: ProjectStatus;
+
+    constructor(id: string, title: string, description: string, numberOfPeople: number, status: ProjectStatus) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.numberOfPeople = numberOfPeople;
+        this.status = status
+    }
 }
 
 function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
@@ -42,9 +54,8 @@ class ProjectState {
         this.listeners.push(listenerFn);
     }
 
-    addProjects({ id, title, description, numberOfPeople }: Project) {
-        const newProject = {
-            id, title, description, numberOfPeople }
+    addProjects(title: string, description: string, numberOfPeople: number) {
+        const newProject = new Project(Math.random().toString(), title, description, +numberOfPeople, ProjectStatus.Active);
         this.projects.unshift(newProject);
         //this.listeners.forEach(listener=>listener([...this.projects]));
         this.listeners.forEach(listener=>listener(this.projects.slice()));
@@ -148,7 +159,7 @@ class TaskInput {
         const userInput = this.fetchUserInput();
         if(Array.isArray(userInput)) {
             const [title, desc, ppo] = userInput;
-            projectState.addProjects({id: Math.random().toString(),title, description: desc, numberOfPeople: +ppo});
+            projectState.addProjects(title, desc, +ppo);
         }
         this.clearForm();
     }
