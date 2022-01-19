@@ -14,6 +14,34 @@ function Autobind(_target: any, _methodName: string | Symbol, descriptor: Proper
     return newDescriptor; 
 }
 
+class TodoList {
+    templateElement: HTMLTemplateElement;
+    hostElement: HTMLDivElement;
+    docElement: HTMLElement;
+
+    constructor(private type: 'active' | 'complete') {
+        this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
+        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
+
+        const docFragment = document.importNode(this.templateElement.content, true);
+        this.docElement = <HTMLElement>docFragment.firstElementChild;
+        this.docElement.id = `${this.type}-projects`;
+
+        this.attachElement();
+        this.renderContent();
+    }
+
+    private renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.docElement.querySelector('ul')!.id = listId;
+        this.docElement.querySelector('h2')!.textContent = `${this.type.toUpperCase()} ITEMS`;
+    }
+
+    private attachElement() {
+        this.hostElement.insertAdjacentElement('beforeend', this.docElement);
+    }
+}
+
 class TaskInput {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -38,14 +66,34 @@ class TaskInput {
 
     }
 
+    private clearForm() : void {
+        this.titleInput.value = '';
+        this.descriptionInput.value = '';
+        this.peopleInput.value = '';
+    }
+
+    private fetchUserInput() : [string, string,  number] | void {
+        const title = this.titleInput.value;
+        const description = this.descriptionInput.value;
+        const people = this.peopleInput.value;
+
+        if(title.trim().length === 0 || description.trim().length === 0 || people.trim().length === 0) {
+            alert('Invalid inputs');
+            return;
+        } else {
+            return [title, description, +people];
+        }
+    }
+
     @Autobind
     private submitHandler (e: Event) {
         e.preventDefault();
-        console.log({
-            title: this.titleInput.value,
-            description: this.descriptionInput.value,
-            people: this.peopleInput.value
-        })
+        const userInput = this.fetchUserInput();
+        if(Array.isArray(userInput)) {
+            const [title, desc, ppo] = userInput;
+            console.log({title, desc, ppo});
+        }
+        this.clearForm();
     }
     private config() {
         this.docElement.addEventListener('submit', this.submitHandler);
@@ -58,3 +106,5 @@ class TaskInput {
 }
 
 new TaskInput();
+new TodoList('active');
+new TodoList('complete');
