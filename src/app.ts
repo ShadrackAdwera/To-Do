@@ -86,6 +86,28 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 
 }
 
+class TodoItem extends Component<HTMLUListElement, HTMLLIElement> {
+    private project: Project;
+    constructor(hostId: string, project: Project) {
+        super('single-project',hostId, false, project.id);
+        this.project = project;
+        this.config();
+        this.renderContent();
+    }
+
+    config(): void {
+        
+    }
+    renderContent(): void {
+        this.docElement.querySelector('h2')!.textContent = this.project.title;
+        this.docElement.querySelector('h3')!.textContent = `${this.project.numberOfPeople===1? `${this.project.numberOfPeople} person` : `${this.project.numberOfPeople} people`}`;
+        this.docElement.querySelector('p')!.textContent = this.project.description;
+        
+    }
+
+
+}
+
 class TodoList extends Component<HTMLDivElement, HTMLElement> {
     assignedProjects: Project[];
 
@@ -121,9 +143,10 @@ class TodoList extends Component<HTMLDivElement, HTMLElement> {
         const listEl = <HTMLUListElement>document.getElementById(`${this.type}-projects-list`)!;
         listEl.innerHTML = '';
         this.assignedProjects.forEach(assignedProject=>{
-            const listItem = document.createElement('li');
-            listItem.textContent = assignedProject.title;
-            listEl?.appendChild(listItem); 
+            new TodoItem(this.docElement.querySelector('ul')!.id , assignedProject);
+            // const listItem = document.createElement('li');
+            // listItem.textContent = assignedProject.title;
+            // listEl?.appendChild(listItem); 
         });
     }
 }
