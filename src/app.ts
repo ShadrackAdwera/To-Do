@@ -1,6 +1,19 @@
 /*
 Display the form when the class is instantiated
 */
+
+function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
+    const originalDescriptor = descriptor.value;
+    const newDescriptor: PropertyDescriptor = {
+        configurable: true,
+        enumerable: false,
+        get() {
+            return originalDescriptor.bind(this);
+        }
+    }
+    return newDescriptor; 
+}
+
 class TaskInput {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
@@ -25,6 +38,7 @@ class TaskInput {
 
     }
 
+    @Autobind
     private submitHandler (e: Event) {
         e.preventDefault();
         console.log({
@@ -34,7 +48,7 @@ class TaskInput {
         })
     }
     private config() {
-        this.docElement.addEventListener('submit', this.submitHandler.bind(this));
+        this.docElement.addEventListener('submit', this.submitHandler);
     }
 
 
