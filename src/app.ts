@@ -72,7 +72,13 @@ class TodoList {
         this.assignedProjects = [];
 
         projectState.addListener((projects: Project[])=>{
-            this.assignedProjects = projects;
+            const filteredItems = projects.filter(project=>{
+                if(this.type === 'active') {
+                   return project.status===ProjectStatus.Active;
+                }
+                return project.status===ProjectStatus.Complete;
+            });
+            this.assignedProjects = filteredItems;
             this.renderProjects();
         })
 
@@ -82,6 +88,7 @@ class TodoList {
 
     private renderProjects() {
         const listEl = <HTMLUListElement>document.getElementById(`${this.type}-projects-list`)!;
+        listEl.innerHTML = '';
         this.assignedProjects.forEach(assignedProject=>{
             const listItem = document.createElement('li');
             listItem.textContent = assignedProject.title;
