@@ -6,19 +6,8 @@ enum ProjectStatus { Active, Complete }
 
 //Project type
 class Project {
-    private id: string;
-    private title: string;
-    private description: string;
-    private numberOfPeople: number;
-    private status: ProjectStatus;
 
-    constructor(id: string, title: string, description: string, numberOfPeople: number, status: ProjectStatus) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.numberOfPeople = numberOfPeople;
-        this.status = status
-    }
+    constructor(public id: string, public title: string, public description: string, public numberOfPeople: number, public status: ProjectStatus) {}
 }
 
 function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
@@ -33,8 +22,10 @@ function Autobind(_target: any, _methodName: string | Symbol, descriptor: Proper
     return newDescriptor; 
 }
 
+type Listener = (items: Project[]) => void;
+
 class ProjectState {
-    private listeners: any[] = [];
+    private listeners: Listener[] = [];
     private projects: Project[] = [];
     private static instance: ProjectState;
 
@@ -50,7 +41,7 @@ class ProjectState {
         return this.instance;
     }
 
-    addListener(listenerFn: Function) {
+    addListener(listenerFn: Listener) {
         this.listeners.push(listenerFn);
     }
 
@@ -69,7 +60,7 @@ class TodoList {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     docElement: HTMLElement;
-    assignedProjects: any[];
+    assignedProjects: Project[];
 
     constructor(private type: 'active' | 'complete') {
         this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
@@ -80,7 +71,7 @@ class TodoList {
         this.docElement.id = `${this.type}-projects`;
         this.assignedProjects = [];
 
-        projectState.addListener((projects: any[])=>{
+        projectState.addListener((projects: Project[])=>{
             this.assignedProjects = projects;
             this.renderProjects();
         })
