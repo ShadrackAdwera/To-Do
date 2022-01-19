@@ -22,6 +22,7 @@ function Autobind(_target: any, _methodName: string | Symbol, descriptor: Proper
 }
 
 class ProjectState {
+    private listeners: any[] = [];
     private projects: Project[] = [];
     private static instance: ProjectState;
 
@@ -37,10 +38,16 @@ class ProjectState {
         return this.instance;
     }
 
+    addListener(listenerFn: Function) {
+        this.listeners.push(listenerFn);
+    }
+
     addProjects({ id, title, description, numberOfPeople }: Project) {
         const newProject = {
             id, title, description, numberOfPeople }
         this.projects.unshift(newProject);
+        //this.listeners.forEach(listener=>listener([...this.projects]));
+        this.listeners.forEach(listener=>listener(this.projects.slice()));
     }
 
 }
@@ -51,6 +58,7 @@ class TodoList {
     templateElement: HTMLTemplateElement;
     hostElement: HTMLDivElement;
     docElement: HTMLElement;
+    assignedProjects: any[];
 
     constructor(private type: 'active' | 'complete') {
         this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
@@ -59,15 +67,31 @@ class TodoList {
         const docFragment = document.importNode(this.templateElement.content, true);
         this.docElement = <HTMLElement>docFragment.firstElementChild;
         this.docElement.id = `${this.type}-projects`;
+        this.assignedProjects = [];
+
+        projectState.addListener((projects: any[])=>{
+            this.assignedProjects = projects;
+            this.renderProjects();
+        })
 
         this.attachElement();
         this.renderContent();
+    }
+
+    private renderProjects() {
+        const listEl = <HTMLUListElement>document.getElementById(`${this.type}-projects-list`)!;
+        this.assignedProjects.forEach(assignedProject=>{
+            const listItem = document.createElement('li');
+            listItem.textContent = assignedProject.title;
+            listEl?.appendChild(listItem); 
+        });
     }
 
     private renderContent() {
         const listId = `${this.type}-projects-list`;
         this.docElement.querySelector('ul')!.id = listId;
         this.docElement.querySelector('h2')!.textContent = `${this.type.toUpperCase()} ITEMS`;
+
     }
 
     private attachElement() {
