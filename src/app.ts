@@ -56,21 +56,46 @@ class ProjectState {
 
 const projectState = ProjectState.getInstance();
 
-class TodoList {
+//Component base class
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    docElement: HTMLElement;
+    hostElement: T;
+    docElement: U;
+
+    constructor(templateId: string, hostId: string, insertAtStart: boolean, newElementId?: string) {
+        this.templateElement = <HTMLTemplateElement>document.getElementById(templateId)!;
+        this.hostElement = <T>document.getElementById(hostId)!;
+
+        const docFragment = document.importNode(this.templateElement.content, true);
+        this.docElement = <U>docFragment.firstElementChild;
+
+        this.docElement.id = newElementId?? '';
+        // if(newElementId) {
+        // }
+
+        this.attachElement(insertAtStart);
+    }
+
+    attachElement(insertAtStart: boolean) {
+        this.hostElement.insertAdjacentElement(insertAtStart? 'afterbegin' : 'beforeend', this.docElement);
+    }
+    abstract renderContent() : void;
+    abstract config() : void;
+
+}
+
+class TodoList extends Component<HTMLDivElement, HTMLElement> {
     assignedProjects: Project[];
 
     constructor(private type: 'active' | 'complete') {
-        this.templateElement = <HTMLTemplateElement>document.getElementById('project-list')!;
-        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
-
-        const docFragment = document.importNode(this.templateElement.content, true);
-        this.docElement = <HTMLElement>docFragment.firstElementChild;
-        this.docElement.id = `${this.type}-projects`;
+        super('project-list','app',false, `${type}-projects`);
         this.assignedProjects = [];
 
+        this.config();
+        this.renderContent();
+    }
+
+    config(): void {
         projectState.addListener((projects: Project[])=>{
             const filteredItems = projects.filter(project=>{
                 if(this.type === 'active') {
@@ -81,9 +106,13 @@ class TodoList {
             this.assignedProjects = filteredItems;
             this.renderProjects();
         })
+    }
 
-        this.attachElement();
-        this.renderContent();
+    renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.docElement.querySelector('ul')!.id = listId;
+        this.docElement.querySelector('h2')!.textContent = `${this.type.toUpperCase()} ITEMS`;
+
     }
 
     private renderProjects() {
@@ -95,43 +124,30 @@ class TodoList {
             listEl?.appendChild(listItem); 
         });
     }
-
-    private renderContent() {
-        const listId = `${this.type}-projects-list`;
-        this.docElement.querySelector('ul')!.id = listId;
-        this.docElement.querySelector('h2')!.textContent = `${this.type.toUpperCase()} ITEMS`;
-
-    }
-
-    private attachElement() {
-        this.hostElement.insertAdjacentElement('beforeend', this.docElement);
-    }
 }
 
-class TaskInput {
-    templateElement: HTMLTemplateElement;
-    hostElement: HTMLDivElement;
-    docElement: HTMLFormElement;
+class TaskInput extends Component<HTMLDivElement, HTMLFormElement> {
     titleInput: HTMLInputElement;
     descriptionInput: HTMLInputElement;
     peopleInput: HTMLInputElement;
 
     constructor() {
-        this.templateElement = <HTMLTemplateElement>document.getElementById('project-input')!;
-        this.hostElement = <HTMLDivElement>document.getElementById('app')!;
-
-        const docFragment = document.importNode(this.templateElement.content, true);
-        this.docElement = <HTMLFormElement>docFragment.firstElementChild;
-        this.docElement.id = 'user-input';
+        super('project-input','app', true, 'user-input');
         this.titleInput = <HTMLInputElement>this.docElement.querySelector('#title')!;
         this.descriptionInput = <HTMLInputElement>this.docElement.querySelector('#description')!;
         this.peopleInput = <HTMLInputElement>this.docElement.querySelector('#people')!;
 
         this.config();
-        this.attachElement();
 
     }
 
+    renderContent(): void {
+        
+    }
+
+    config() {
+        this.docElement.addEventListener('submit', this.submitHandler);
+    }
     private clearForm() : void {
         this.titleInput.value = '';
         this.descriptionInput.value = '';
@@ -160,14 +176,6 @@ class TaskInput {
             projectState.addProjects(title, desc, +ppo);
         }
         this.clearForm();
-    }
-    private config() {
-        this.docElement.addEventListener('submit', this.submitHandler);
-    }
-
-
-    private attachElement() {
-        this.hostElement.insertAdjacentElement('afterbegin', this.docElement);
     }
 }
 
