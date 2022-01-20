@@ -4,6 +4,18 @@ Display the form when the class is instantiated
 
 enum ProjectStatus { Active, Complete }
 
+//Drag and drop interfaces
+interface Draggable {
+    dragStartHandler(event: DragEvent) : void; 
+    dragEndHandler(event: DragEvent) : void;
+}
+
+interface DragTarget {
+    dragOverHandler(event: DragEvent) : void;
+    dropHandler(event: DragEvent) : void;
+    dragLeaveHandler(event: DragEvent) : void;
+}
+
 //Project type
 class Project {
 
@@ -86,7 +98,7 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
 
 }
 
-class TodoItem extends Component<HTMLUListElement, HTMLLIElement> {
+class TodoItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
     private project: Project;
     constructor(hostId: string, project: Project) {
         super('single-project',hostId, false, project.id);
@@ -95,12 +107,23 @@ class TodoItem extends Component<HTMLUListElement, HTMLLIElement> {
         this.renderContent();
     }
 
+    @Autobind
+    dragStartHandler(event: DragEvent): void {
+        console.log(event);
+    }
+
+    @Autobind
+    dragEndHandler(_event: DragEvent): void {
+        console.log('Drag ends here');
+    }
+
     config(): void {
-        
+        this.docElement.addEventListener('dragstart', this.dragStartHandler);
+        this.docElement.addEventListener('dragend', this.dragEndHandler);
     }
     renderContent(): void {
         this.docElement.querySelector('h2')!.textContent = this.project.title;
-        this.docElement.querySelector('h3')!.textContent = `${this.project.numberOfPeople===1? `${this.project.numberOfPeople} person` : `${this.project.numberOfPeople} people`}`;
+        this.docElement.querySelector('h3')!.textContent = `${this.project.numberOfPeople===1? `${this.project.numberOfPeople} person assigned` : `${this.project.numberOfPeople} people assigned`}`;
         this.docElement.querySelector('p')!.textContent = this.project.description;
         
     }
