@@ -62,6 +62,18 @@ class ProjectState extends AppState<Project> {
     addProjects(title: string, description: string, numberOfPeople: number) {
         const newProject = new Project(Math.random().toString(), title, description, +numberOfPeople, ProjectStatus.Active);
         this.projects.unshift(newProject);
+        this.updateListeners();
+    }
+    
+    moveProject(projectId: string, newStatus: ProjectStatus) {
+        const foundProject = this.projects.find(project=>project.id===projectId);
+        if(foundProject && foundProject.status!==newStatus) {
+            foundProject.status = newStatus;
+            this.updateListeners();
+        }
+    }
+    
+    private updateListeners () {
         //this.listeners.forEach(listener=>listener([...this.projects]));
         this.listeners.forEach(listener=>listener(this.projects.slice()));
     }
@@ -151,8 +163,11 @@ class TodoList extends Component<HTMLDivElement, HTMLElement> implements DragTar
             listEl?.classList.add('droppable');
         }
     }
+
+    @Autobind
     dropHandler(event: DragEvent): void {
-        console.log(event.dataTransfer!.getData('text/plain'));
+        const projectId = event.dataTransfer!.getData('text/plain');
+        projectState.moveProject(projectId, this.type==='active'? ProjectStatus.Active : ProjectStatus.Complete);
     }
 
     @Autobind
