@@ -1,5 +1,6 @@
-namespace App {
-    type Listener<T> = (items: T[]) => void;
+import { Project, ProjectStatus } from '../models/project-model.js';
+
+type Listener<T> = (items: T[]) => void;
 
 class AppState<T> {
     protected listeners: Listener<T>[] = [];
@@ -46,4 +47,3 @@ export class ProjectState extends AppState<Project> {
 }
 
 export const projectState = ProjectState.getInstance();
-}

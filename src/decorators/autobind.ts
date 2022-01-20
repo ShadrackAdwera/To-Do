@@ -1,4 +1,3 @@
-namespace App {
 export function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
     const originalDescriptor = descriptor.value;
     const newDescriptor: PropertyDescriptor = {
@@ -9,5 +8,4 @@ export function Autobind(_target: any, _methodName: string | Symbol, descriptor:
         }
     }
     return newDescriptor; 
-}
 }

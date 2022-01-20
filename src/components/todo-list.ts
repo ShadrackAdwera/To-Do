@@ -1,4 +1,11 @@
-namespace App {
+import { Component } from './app-component.js';
+import { Autobind } from '../decorators/autobind.js';
+import { projectState } from '../state/app-state.js';
+import { Project,ProjectStatus } from '../models/project-model.js';
+import { TodoItem } from './todo-item.js';
+import { DragTarget } from '../models/drag-drop-interfaces.js';
+
+
     export class TodoList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{
         assignedProjects: Project[];
     
@@ -66,5 +73,4 @@ namespace App {
                 // listEl?.appendChild(listItem); 
             });
         }
-    }
 }

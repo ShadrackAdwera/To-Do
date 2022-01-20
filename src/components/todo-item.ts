@@ -1,4 +1,9 @@
-namespace App {
+import { Draggable } from '../models/drag-drop-interfaces.js';
+import { Component } from './app-component.js';
+import { Project } from '../models/project-model.js';
+import { Autobind } from '../decorators/autobind.js';
+
+
     export class TodoItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {
         private project: Project;
         constructor(hostId: string, project: Project) {
@@ -29,7 +34,4 @@ namespace App {
             this.docElement.querySelector('p')!.textContent = this.project.description;
             
         }
-    
-    
-    }
 }

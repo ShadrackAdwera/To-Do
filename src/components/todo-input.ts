@@ -1,4 +1,7 @@
-namespace App {
+import { Component } from './app-component.js';
+import { Autobind } from '../decorators/autobind.js';
+import { projectState } from '../state/app-state.js';
+    
     export class TodoInput extends Component<HTMLDivElement, HTMLFormElement> {
         titleInput: HTMLInputElement;
         descriptionInput: HTMLInputElement;
@@ -50,5 +53,4 @@ namespace App {
             }
             this.clearForm();
         }
-    }
 }

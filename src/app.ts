@@ -1,19 +1,6 @@
-/// <reference path="./models/drag-drop-interfaces.ts" />
-/// <reference path="./models/project-model.ts" />
-/// <reference path="./state/app-state.ts" />
-/// <reference path="./decorators/autobind.ts" />
-/// <reference path="./components/app-component.ts" />
-/// <reference path="./components/todo-item.ts" />
-/// <reference path="./components/todo-input.ts" />
-/// <reference path="./components/todo-list.ts" />
-
-/*
-Display the form when the class is instantiated
-*/
-
-namespace App {
+import { TodoInput } from './components/todo-input.js';
+import { TodoList } from './components/todo-list.js';
 
 new TodoInput();
 new TodoList('active');
 new TodoList('complete');
-}
