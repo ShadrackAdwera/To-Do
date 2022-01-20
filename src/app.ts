@@ -1,26 +1,12 @@
+/// <reference path="drag-drop-interfaces.ts" />
+/// <reference path="project-model.ts" />
+
 /*
 Display the form when the class is instantiated
 */
 
-enum ProjectStatus { Active, Complete }
-
-//Drag and drop interfaces
-interface Draggable {
-    dragStartHandler(event: DragEvent) : void; 
-    dragEndHandler(event: DragEvent) : void;
-}
-
-interface DragTarget {
-    dragOverHandler(event: DragEvent) : void;
-    dropHandler(event: DragEvent) : void;
-    dragLeaveHandler(event: DragEvent) : void;
-}
-
-//Project type
-class Project {
-
-    constructor(public id: string, public title: string, public description: string, public numberOfPeople: number, public status: ProjectStatus) {}
-}
+namespace App {
+  
 
 function Autobind(_target: any, _methodName: string | Symbol, descriptor: PropertyDescriptor) {
     const originalDescriptor = descriptor.value;
@@ -269,3 +255,4 @@ class TaskInput extends Component<HTMLDivElement, HTMLFormElement> {
 new TaskInput();
 new TodoList('active');
 new TodoList('complete');
+}
