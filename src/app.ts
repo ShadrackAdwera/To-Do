@@ -131,7 +131,7 @@ class TodoItem extends Component<HTMLUListElement, HTMLLIElement> implements Dra
 
 }
 
-class TodoList extends Component<HTMLDivElement, HTMLElement> {
+class TodoList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{
     assignedProjects: Project[];
 
     constructor(private type: 'active' | 'complete') {
@@ -142,7 +142,26 @@ class TodoList extends Component<HTMLDivElement, HTMLElement> {
         this.renderContent();
     }
 
+    @Autobind
+    dragOverHandler(_event: DragEvent): void {
+        const listEl = this.docElement.querySelector('ul');
+        listEl?.classList.add('droppable')
+    }
+    dropHandler(_event: DragEvent): void {
+        
+    }
+
+    @Autobind
+    dragLeaveHandler(_event: DragEvent): void {
+        const listEl = this.docElement.querySelector('ul');
+        listEl?.classList.remove('droppable');
+    }
+
     config(): void {
+        this.docElement.addEventListener('dragover', this.dragOverHandler);
+        this.docElement.addEventListener('dragleave', this.dragLeaveHandler);
+        this.docElement.addEventListener('drop', this.dropHandler);
+
         projectState.addListener((projects: Project[])=>{
             const filteredItems = projects.filter(project=>{
                 if(this.type === 'active') {
