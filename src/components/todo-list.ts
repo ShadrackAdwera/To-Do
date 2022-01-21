@@ -1,9 +1,9 @@
-import { Component } from './app-component.js';
-import { Autobind } from '../decorators/autobind.js';
-import { projectState } from '../state/app-state.js';
-import { Project,ProjectStatus } from '../models/project-model.js';
-import { TodoItem } from './todo-item.js';
-import { DragTarget } from '../models/drag-drop-interfaces.js';
+import { Component } from './app-component';
+import { Autobind } from '../decorators/autobind';
+import { projectState } from '../state/app-state';
+import { Project,ProjectStatus } from '../models/project-model';
+import { TodoItem } from './todo-item';
+import { DragTarget } from '../models/drag-drop-interfaces';
 
 
     export class TodoList extends Component<HTMLDivElement, HTMLElement> implements DragTarget{

@@ -1,7 +1,7 @@
-import { Draggable } from '../models/drag-drop-interfaces.js';
-import { Component } from './app-component.js';
-import { Project } from '../models/project-model.js';
-import { Autobind } from '../decorators/autobind.js';
+import { Draggable } from '../models/drag-drop-interfaces';
+import { Component } from './app-component';
+import { Project } from '../models/project-model';
+import { Autobind } from '../decorators/autobind';
 
 
     export class TodoItem extends Component<HTMLUListElement, HTMLLIElement> implements Draggable {

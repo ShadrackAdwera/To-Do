@@ -1,6 +1,6 @@
-import { Component } from './app-component.js';
-import { Autobind } from '../decorators/autobind.js';
-import { projectState } from '../state/app-state.js';
+import { Component } from './app-component';
+import { Autobind } from '../decorators/autobind';
+import { projectState } from '../state/app-state';
     
     export class TodoInput extends Component<HTMLDivElement, HTMLFormElement> {
         titleInput: HTMLInputElement;

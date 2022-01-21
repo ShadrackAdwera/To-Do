@@ -1,5 +1,5 @@
-import { TodoInput } from './components/todo-input.js';
-import { TodoList } from './components/todo-list.js';
+import { TodoInput } from './components/todo-input';
+import { TodoList } from './components/todo-list';
 
 new TodoInput();
 new TodoList('active');
